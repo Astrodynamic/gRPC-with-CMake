@@ -1,23 +1,15 @@
-#
-# Dependencies
-#
-find_package(Threads)
+project(client VERSION 0.0.1 LANGUAGES CXX)
 
-#
-# Sources
-#
-set(SOURCES
-    src/main.cpp
+add_executable(${PROJECT_NAME}
+    src/main.cc
 )
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
-
-
-#
-# Target
-#
-add_executable(client ${SOURCES})
-target_link_libraries(client
+target_compile_features(${PROJECT_NAME}
     PRIVATE
-        myproto
+    cxx_std_20
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    myproto
 )

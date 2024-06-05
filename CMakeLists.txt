@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
-project(example-grpc LANGUAGES CXX)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_CXX_STANDARD 17)
+project(gRPC_CMake VERSION 0.0.1 LANGUAGES CXX)
 
-add_subdirectory(client)
-add_subdirectory(server)
 add_subdirectory(proto)
+add_subdirectory(server)
+add_subdirectory(client)
