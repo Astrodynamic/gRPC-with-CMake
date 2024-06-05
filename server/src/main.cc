@@ -8,7 +8,7 @@
 
 class AddressBookImpl final : public example::AddressBook::Service {
  public:
-  virtual ::grpc::Status GetAddress(::grpc::ServerContext* context, const ::example::NameQuerry* request, ::example::Address* response) {
+  virtual ::grpc::Status GetAddress(::grpc::ServerContext* context, const ::example::NameQuerry* request, ::example::Address* response) override {
     std::cout << "Server: GetAddress for \"" << request->name() << "\"." << std::endl;
 
     response->set_name("Peter Peterson");
