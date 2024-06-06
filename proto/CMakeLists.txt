@@ -4,8 +4,9 @@ find_package(protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
 add_library(${PROJECT_NAME}
-    myproto/address.proto
-    myproto/addressbook.proto
+    myproto/move.proto
+    myproto/stop.proto
+    myproto/control.proto
 )
 
 target_compile_features(${PROJECT_NAME}

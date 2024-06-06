@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package robot;
+
+message MoveRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message MoveResponse {
+  string message = 1;
+}

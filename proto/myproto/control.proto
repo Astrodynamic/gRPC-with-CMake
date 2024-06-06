@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package robot;
+
+import "myproto/move.proto";
+import "myproto/stop.proto";
+
+service RobotControl {
+  rpc Move(MoveRequest) returns (MoveResponse);
+  rpc Stop(StopRequest) returns (StopResponse);
+}

@@ -1,33 +1,40 @@
-#include <grpc/grpc.h>
-#include <grpcpp/server_builder.h>
-
-#include <myproto/address.pb.h>
-#include <myproto/addressbook.grpc.pb.h>
+#include <grpcpp/grpcpp.h>
 
 #include <iostream>
+#include <memory>
+#include <string>
 
-class AddressBookImpl final : public example::AddressBook::Service {
- public:
-  virtual ::grpc::Status GetAddress(::grpc::ServerContext* context, const ::example::NameQuerry* request, ::example::Address* response) override {
-    std::cout << "Server: GetAddress for \"" << request->name() << "\"." << std::endl;
+#include "myproto/control.grpc.pb.h"
 
-    response->set_name("Peter Peterson");
-    response->set_zip("12345");
-    response->set_country("Superland");
+class RobotControlServiceImpl final : public robot::RobotControl::Service {
+  grpc::Status Move(grpc::ServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) override {
+    response->set_message("Moved to (" + std::to_string(request->x()) + ", " + std::to_string(request->y()) + ")");
+    return grpc::Status::OK;
+  }
 
+  grpc::Status Stop(grpc::ServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) override {
+    response->set_message("Robot stopped");
     return grpc::Status::OK;
   }
 };
 
-int main(int argc, char* argv[]) {
-  grpc::ServerBuilder builder;
-  builder.AddListeningPort("0.0.0.0:50051", grpc::InsecureServerCredentials());
+void RunServer() {
+  std::string server_address("0.0.0.0:50051");
 
-  AddressBookImpl my_service;
-  builder.RegisterService(&my_service);
+  RobotControlServiceImpl service;
+
+  grpc::ServerBuilder builder;
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  builder.RegisterService(&service);
 
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  server->Wait();
 
+  std::cout << "Server listening on " << server_address << std::endl;
+
+  server->Wait();
+}
+
+int main(int argc, char** argv) {
+  RunServer();
   return 0;
 }
