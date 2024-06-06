@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.24.2)
 
-project(gRPC_CMake VERSION 0.0.1 LANGUAGES CXX)
+project(gRPCQuests VERSION 0.0.1 LANGUAGES CXX)
 
 add_subdirectory(proto)
 add_subdirectory(server)

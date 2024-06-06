@@ -1,23 +1,18 @@
-# Project README
+# gRPCQuests
 
-## Overview
+- [gRPCQuests](#grpcquests)
+  - [Introduction](#introduction)
+  - [Requirements](#requirements)
+  - [LICENSE](#license)
 
-This project aims to provide a hands-on experience with gRPC and Protocol Buffers (protobuf) while using C++. It serves as a practical guide for setting up and configuring a gRPC server and client in C++, alongside exploring the intricacies of protobuf.
+## Introduction
+This project explores the capabilities of gRPC and Protocol Buffers (Protobuf) using C++. It focuses on service definitions, client-server communication, performance optimization, and security aspects. Additionally, it evaluates the effectiveness of CMake for building, optimizing, and managing gRPC-based projects.
 
-## Objectives
+## Requirements
+- gRPC (latest stable version)
+- Protocol Buffers (Protobuf) (latest stable version)
+- CMake (version 3.24.2 or later)
+- C++20 or later
 
-- **Learn gRPC and Protocol Buffers**: Understand the fundamentals of gRPC and protobuf, their uses, and benefits.
-- **Develop in C++**: Gain practical experience in C++ by implementing a gRPC server and client.
-- **Server and Client Configuration**: Learn to set up and configure a gRPC server and client in C++.
-- **Protobuf Handling**: Delve into creating and using protobuf files in a C++ environment.
-
-## Prerequisites
-
-- Basic understanding of C++.
-- Familiarity with RPC (Remote Procedure Call) concepts.
-- Development environment set up for C++ (e.g., g++, CMake).
-- gRPC and protobuf installed on your machine.
-
-## Conclusion
-
-This project provides a foundational understanding of gRPC and Protocol Buffers in a C++ environment. By following this guide, you will learn to create and use protobuf files, implement a gRPC server and client, and configure the necessary build environment.
+## LICENSE
+This project is licensed under the [MIT License](LICENSE). Feel free to modify and distribute it as per the terms of the license.
