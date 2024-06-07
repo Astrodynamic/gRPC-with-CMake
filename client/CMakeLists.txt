@@ -1,6 +1,16 @@
 project(client VERSION 0.0.1 LANGUAGES CXX)
 
+set(HEADERS
+    src/client.h
+)
+
+set(SOURCES
+    src/client.cc
+)
+
 add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
     src/main.cc
 )
 

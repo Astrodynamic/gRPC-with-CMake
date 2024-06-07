@@ -4,9 +4,9 @@ find_package(protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
 add_library(${PROJECT_NAME}
-    myproto/move.proto
-    myproto/stop.proto
-    myproto/control.proto
+    robot/move.proto
+    robot/stop.proto
+    robot/control.proto
 )
 
 target_compile_features(${PROJECT_NAME}
