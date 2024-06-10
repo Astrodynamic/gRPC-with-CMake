@@ -6,9 +6,9 @@
 
 #include "robot/control.grpc.pb.h"
 
-class RobotControlAsyncImpl final {
+class RobotControlAsyncServerImpl final {
  public:
-  ~RobotControlAsyncImpl();
+  ~RobotControlAsyncServerImpl();
 
   void Run();
 

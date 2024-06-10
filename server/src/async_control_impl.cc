@@ -5,12 +5,12 @@
 #include <thread>
 #include <vector>
 
-RobotControlAsyncImpl::~RobotControlAsyncImpl() {
+RobotControlAsyncServerImpl::~RobotControlAsyncServerImpl() {
   m_server->Shutdown();
   m_cq->Shutdown();
 }
 
-void RobotControlAsyncImpl::Run() {
+void RobotControlAsyncServerImpl::Run() {
   std::string server_address("0.0.0.0:50051");
 
   grpc::ServerBuilder builder;
@@ -23,31 +23,32 @@ void RobotControlAsyncImpl::Run() {
   HandleRpcs();
 }
 
-RobotControlAsyncImpl::CallData::CallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : m_service(service), m_cq(cq), m_status(CREATE) {}
+RobotControlAsyncServerImpl::CallData::CallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : m_service(service), m_cq(cq), m_status(CREATE) {}
 
-RobotControlAsyncImpl::MoveCallData::MoveCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : CallData(service, cq), m_responder(&m_ctx) {
+RobotControlAsyncServerImpl::MoveCallData::MoveCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : CallData(service, cq), m_responder(&m_ctx) {
   Proceed(true);
 }
 
-void RobotControlAsyncImpl::MoveCallData::Proceed(bool ok) {
+void RobotControlAsyncServerImpl::MoveCallData::Proceed(bool ok) {
   if (m_status == CREATE) {
-    m_service->RequestMove(&m_ctx, &m_request, &m_responder, m_cq, m_cq, this);
     m_status = PROCESS;
+    m_service->RequestMove(&m_ctx, &m_request, &m_responder, m_cq, m_cq, this);
   } else if (m_status == PROCESS) {
     new MoveCallData(m_service, m_cq);
     m_response.set_message("Moved to (" + std::to_string(m_request.x()) + ", " + std::to_string(m_request.y()) + ")");
-    m_responder.Finish(m_response, grpc::Status::OK, this);
+
     m_status = FINISH;
+    m_responder.Finish(m_response, grpc::Status::OK, this);
   } else {
     delete this;
   }
 }
 
-RobotControlAsyncImpl::StopCallData::StopCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : CallData(service, cq), m_responder(&m_ctx) {
+RobotControlAsyncServerImpl::StopCallData::StopCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : CallData(service, cq), m_responder(&m_ctx) {
   Proceed(true);
 }
 
-void RobotControlAsyncImpl::StopCallData::Proceed(bool ok) {
+void RobotControlAsyncServerImpl::StopCallData::Proceed(bool ok) {
   if (m_status == CREATE) {
     m_status = PROCESS;
     m_service->RequestStop(&m_ctx, &m_request, &m_responder, m_cq, m_cq, this);
@@ -61,7 +62,7 @@ void RobotControlAsyncImpl::StopCallData::Proceed(bool ok) {
   }
 }
 
-void RobotControlAsyncImpl::HandleRpcs() {
+void RobotControlAsyncServerImpl::HandleRpcs() {
   new MoveCallData(&m_service, m_cq.get());
   new StopCallData(&m_service, m_cq.get());
 
