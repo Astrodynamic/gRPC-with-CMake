@@ -6,8 +6,7 @@
 #include <vector>
 
 RobotControlAsyncServerImpl::~RobotControlAsyncServerImpl() {
-  m_server->Shutdown();
-  m_cq->Shutdown();
+  Shutdown();
 }
 
 void RobotControlAsyncServerImpl::Run() {
@@ -21,6 +20,11 @@ void RobotControlAsyncServerImpl::Run() {
   std::cout << "Server listening on " << server_address << std::endl;
 
   HandleRpcs();
+}
+
+void RobotControlAsyncServerImpl::Shutdown() {
+  m_server->Shutdown();
+  m_cq->Shutdown();
 }
 
 RobotControlAsyncServerImpl::CallData::CallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq) : m_service(service), m_cq(cq), m_status(CREATE) {}

@@ -3,11 +3,23 @@
 #include <iostream>
 #include <string>
 
-RobotControlClient::RobotControlClient(std::shared_ptr<grpc::Channel> channel) : m_stub(robot::RobotControl::NewStub(channel)) {
+RobotControlAsyncClientImpl::RobotControlAsyncClientImpl(std::shared_ptr<grpc::Channel> channel) : m_stub(robot::RobotControl::NewStub(channel)) {
   m_cq = std::make_unique<grpc::CompletionQueue>();
 }
 
-void RobotControlClient::Move(int x, int y) {
+RobotControlAsyncClientImpl::~RobotControlAsyncClientImpl() {
+  Shutdown();
+}
+
+void RobotControlAsyncClientImpl::Run() {
+  HandleRpcs();
+}
+
+void RobotControlAsyncClientImpl::Shutdown() {
+  m_cq->Shutdown();
+}
+
+void RobotControlAsyncClientImpl::Move(int x, int y) {
   robot::MoveRequest request;
   request.set_x(x);
   request.set_y(y);
@@ -24,7 +36,7 @@ void RobotControlClient::Move(int x, int y) {
   }
 }
 
-void RobotControlClient::AsyncMove(int x, int y) {
+void RobotControlAsyncClientImpl::AsyncMove(int x, int y) {
   robot::MoveRequest request;
   request.set_x(x);
   request.set_y(y);
@@ -48,7 +60,18 @@ void RobotControlClient::AsyncMove(int x, int y) {
   }
 }
 
-void RobotControlClient::Stop() {
+void RobotControlAsyncClientImpl::AsyncMove2(int x, int y) {
+  robot::MoveRequest request;
+  request.set_x(x);
+  request.set_y(y);
+
+  MoveCallData* call = new MoveCallData();
+  call->m_responder = m_stub->PrepareAsyncMove(&call->m_ctx, request, m_cq.get());
+  call->m_responder->StartCall();
+  call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
+}
+
+void RobotControlAsyncClientImpl::Stop() {
   robot::StopRequest request;
   robot::StopResponse response;
   grpc::ClientContext context;
@@ -62,7 +85,7 @@ void RobotControlClient::Stop() {
   }
 }
 
-void RobotControlClient::AsyncStop() {
+void RobotControlAsyncClientImpl::AsyncStop() {
   robot::StopRequest request;
   robot::StopResponse response;
   grpc::ClientContext context;
@@ -80,5 +103,40 @@ void RobotControlClient::AsyncStop() {
     } else {
       std::cout << "Stop RPC failed." << std::endl;
     }
+  }
+}
+
+void RobotControlAsyncClientImpl::AsyncStop2() {
+  robot::StopRequest request;
+
+  StopCallData* call = new StopCallData();
+  call->m_responder = m_stub->PrepareAsyncStop(&call->m_ctx, request, m_cq.get());
+  call->m_responder->StartCall();
+  call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
+}
+
+void RobotControlAsyncClientImpl::MoveCallData::Proceed(bool ok) {
+  if (m_status.ok()) {
+    std::cout << "Move response: " << m_response.message() << std::endl;
+  } else {
+    std::cout << "Move RPC failed." << std::endl;
+  }
+  delete this;
+}
+
+void RobotControlAsyncClientImpl::StopCallData::Proceed(bool ok) {
+  if (m_status.ok()) {
+    std::cout << "Stop response: " << m_response.message() << std::endl;
+  } else {
+    std::cout << "Stop RPC failed." << std::endl;
+  }
+  delete this;
+}
+
+void RobotControlAsyncClientImpl::HandleRpcs() {
+  void* tag;
+  bool ok;
+  while (m_cq->Next(&tag, &ok)) {
+    static_cast<CallData*>(tag)->Proceed(ok);
   }
 }

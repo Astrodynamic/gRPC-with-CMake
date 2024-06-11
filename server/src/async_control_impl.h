@@ -11,6 +11,7 @@ class RobotControlAsyncServerImpl final {
   ~RobotControlAsyncServerImpl();
 
   void Run();
+  void Shutdown();
 
  private:
   class CallData {
