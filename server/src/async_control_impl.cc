@@ -8,14 +8,14 @@
 class CallData {
  public:
   virtual ~CallData() = default;
-  virtual void Proceed(bool ok) = 0;
+  virtual auto Proceed(bool ok) -> void = 0;
 
  protected:
   CallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq);
 
   enum class CallStatus { CREATE,
-                    PROCESS,
-                    FINISH };
+                          PROCESS,
+                          FINISH };
 
   robot::RobotControl::AsyncService* m_service;
   grpc::ServerCompletionQueue* m_cq;
@@ -29,7 +29,7 @@ CallData::CallData(robot::RobotControl::AsyncService* service, grpc::ServerCompl
 class MoveCallData : public CallData {
  public:
   MoveCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq);
-  void Proceed(bool ok) override;
+  auto Proceed(bool ok) -> void override;
 
  private:
   robot::MoveRequest m_request;
@@ -41,7 +41,7 @@ MoveCallData::MoveCallData(robot::RobotControl::AsyncService* service, grpc::Ser
   Proceed(true);
 }
 
-void MoveCallData::Proceed(bool ok) {
+auto MoveCallData::Proceed(bool ok) -> void {
   if (m_status == CallStatus::CREATE) {
     m_status = CallStatus::PROCESS;
     m_service->RequestMove(&m_ctx, &m_request, &m_responder, m_cq, m_cq, this);
@@ -59,7 +59,7 @@ void MoveCallData::Proceed(bool ok) {
 class StopCallData : public CallData {
  public:
   StopCallData(robot::RobotControl::AsyncService* service, grpc::ServerCompletionQueue* cq);
-  void Proceed(bool ok) override;
+  auto Proceed(bool ok) -> void override;
 
  private:
   robot::StopRequest m_request;
@@ -71,7 +71,7 @@ StopCallData::StopCallData(robot::RobotControl::AsyncService* service, grpc::Ser
   Proceed(true);
 }
 
-void StopCallData::Proceed(bool ok) {
+auto StopCallData::Proceed(bool ok) -> void {
   if (m_status == CallStatus::CREATE) {
     m_status = CallStatus::PROCESS;
     m_service->RequestStop(&m_ctx, &m_request, &m_responder, m_cq, m_cq, this);
@@ -89,7 +89,7 @@ RobotControlAsyncServerImpl::~RobotControlAsyncServerImpl() {
   Shutdown();
 }
 
-void RobotControlAsyncServerImpl::Run(std::string soket) {
+auto RobotControlAsyncServerImpl::Run(std::string soket) -> void {
   grpc::ServerBuilder builder;
   builder.AddListeningPort(soket, grpc::InsecureServerCredentials());
   builder.RegisterService(&m_service);
@@ -100,12 +100,12 @@ void RobotControlAsyncServerImpl::Run(std::string soket) {
   HandleRpcs();
 }
 
-void RobotControlAsyncServerImpl::Shutdown() {
+auto RobotControlAsyncServerImpl::Shutdown() -> void {
   m_server->Shutdown();
   m_cq->Shutdown();
 }
 
-void RobotControlAsyncServerImpl::HandleRpcs() {
+auto RobotControlAsyncServerImpl::HandleRpcs() -> void {
   new MoveCallData(&m_service, m_cq.get());
   new StopCallData(&m_service, m_cq.get());
 

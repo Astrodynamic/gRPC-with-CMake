@@ -2,12 +2,12 @@
 
 #include <string>
 
-grpc::Status RobotControlImpl::Move(grpc::ServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) {
+auto RobotControlImpl::Move(grpc::ServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) -> grpc::Status {
   response->set_message("Moved to (" + std::to_string(request->x()) + ", " + std::to_string(request->y()) + ")");
   return grpc::Status::OK;
 }
 
-grpc::Status RobotControlImpl::Stop(grpc::ServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) {
+auto RobotControlImpl::Stop(grpc::ServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) -> grpc::Status {
   response->set_message("Robot stopped");
   return grpc::Status::OK;
 }

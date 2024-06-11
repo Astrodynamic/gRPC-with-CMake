@@ -6,7 +6,7 @@ Server::Server() {
   m_service = std::make_unique<RobotControlImpl>();
 }
 
-void Server::Run(const std::string& address) {
+auto Server::Run(const std::string& address) -> void {
   grpc::ServerBuilder builder;
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
   builder.RegisterService(m_service.get());

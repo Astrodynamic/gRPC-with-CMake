@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "control_impl.h"
 
@@ -9,7 +9,7 @@ class Server final {
  public:
   Server();
 
-  void Run(const std::string& address);
+  auto Run(const std::string& address) -> void;
 
  private:
   std::unique_ptr<RobotControlImpl> m_service;

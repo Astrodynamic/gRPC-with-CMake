@@ -11,19 +11,19 @@ class RobotControlAsyncClientImpl final {
   explicit RobotControlAsyncClientImpl(std::shared_ptr<grpc::Channel> channel);
   virtual ~RobotControlAsyncClientImpl();
 
-  void Run();
-  void Shutdown();
+  auto Run() -> void;
+  auto Shutdown() -> void;
 
-  void Move(int x, int y);
-  void AsyncMove(int x, int y);
-  void AsyncMove2(int x, int y);
+  auto Move(int x, int y) -> void;
+  auto AsyncMove(int x, int y) -> void;
+  auto AsyncMove2(int x, int y) -> void;
 
-  void Stop();
-  void AsyncStop();
-  void AsyncStop2();
+  auto Stop() -> void;
+  auto AsyncStop() -> void;
+  auto AsyncStop2() -> void;
 
  private:
-  void HandleRpcs();
+  auto HandleRpcs() -> void;
 
   std::unique_ptr<robot::RobotControl::Stub> m_stub;
   std::unique_ptr<grpc::CompletionQueue> m_cq;

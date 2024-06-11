@@ -10,11 +10,11 @@ class RobotControlAsyncServerImpl final {
  public:
   ~RobotControlAsyncServerImpl();
 
-  void Run(std::string soket);
-  void Shutdown();
+  auto Run(std::string soket) -> void;
+  auto Shutdown() -> void;
 
  private:
-  void HandleRpcs();
+  auto HandleRpcs() -> void;
 
   std::unique_ptr<grpc::ServerCompletionQueue> m_cq;
   robot::RobotControl::AsyncService m_service;

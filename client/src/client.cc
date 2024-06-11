@@ -5,20 +5,20 @@
 
 struct CallData {
   virtual ~CallData() = default;
-  virtual void Proceed(bool ok) = 0;
+  virtual auto Proceed(bool ok) -> void = 0;
 
   grpc::ClientContext m_ctx;
   grpc::Status m_status;
 };
 
 struct MoveCallData : public CallData {
-  void Proceed(bool ok) override;
+  auto Proceed(bool ok) -> void override;
 
   robot::MoveResponse m_response;
   std::unique_ptr<grpc::ClientAsyncResponseReader<robot::MoveResponse>> m_responder;
 };
 
-void MoveCallData::Proceed(bool ok) {
+auto MoveCallData::Proceed(bool ok) -> void {
   if (m_status.ok()) {
     std::cout << "Move response: " << m_response.message() << std::endl;
   } else {
@@ -28,13 +28,13 @@ void MoveCallData::Proceed(bool ok) {
 }
 
 struct StopCallData : public CallData {
-  void Proceed(bool ok) override;
+  auto Proceed(bool ok) -> void override;
 
   robot::StopResponse m_response;
   std::unique_ptr<grpc::ClientAsyncResponseReader<robot::StopResponse>> m_responder;
 };
 
-void StopCallData::Proceed(bool ok) {
+auto StopCallData::Proceed(bool ok) -> void {
   if (m_status.ok()) {
     std::cout << "Stop response: " << m_response.message() << std::endl;
   } else {
@@ -51,15 +51,15 @@ RobotControlAsyncClientImpl::~RobotControlAsyncClientImpl() {
   Shutdown();
 }
 
-void RobotControlAsyncClientImpl::Run() {
+auto RobotControlAsyncClientImpl::Run() -> void {
   HandleRpcs();
 }
 
-void RobotControlAsyncClientImpl::Shutdown() {
+auto RobotControlAsyncClientImpl::Shutdown() -> void {
   m_cq->Shutdown();
 }
 
-void RobotControlAsyncClientImpl::Move(int x, int y) {
+auto RobotControlAsyncClientImpl::Move(int x, int y) -> void {
   robot::MoveRequest request;
   request.set_x(x);
   request.set_y(y);
@@ -76,7 +76,7 @@ void RobotControlAsyncClientImpl::Move(int x, int y) {
   }
 }
 
-void RobotControlAsyncClientImpl::AsyncMove(int x, int y) {
+auto RobotControlAsyncClientImpl::AsyncMove(int x, int y) -> void {
   robot::MoveRequest request;
   request.set_x(x);
   request.set_y(y);
@@ -100,7 +100,7 @@ void RobotControlAsyncClientImpl::AsyncMove(int x, int y) {
   }
 }
 
-void RobotControlAsyncClientImpl::AsyncMove2(int x, int y) {
+auto RobotControlAsyncClientImpl::AsyncMove2(int x, int y) -> void {
   robot::MoveRequest request;
   request.set_x(x);
   request.set_y(y);
@@ -111,7 +111,7 @@ void RobotControlAsyncClientImpl::AsyncMove2(int x, int y) {
   call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
 }
 
-void RobotControlAsyncClientImpl::Stop() {
+auto RobotControlAsyncClientImpl::Stop() -> void {
   robot::StopRequest request;
   robot::StopResponse response;
   grpc::ClientContext context;
@@ -125,7 +125,7 @@ void RobotControlAsyncClientImpl::Stop() {
   }
 }
 
-void RobotControlAsyncClientImpl::AsyncStop() {
+auto RobotControlAsyncClientImpl::AsyncStop() -> void {
   robot::StopRequest request;
   robot::StopResponse response;
   grpc::ClientContext context;
@@ -146,7 +146,7 @@ void RobotControlAsyncClientImpl::AsyncStop() {
   }
 }
 
-void RobotControlAsyncClientImpl::AsyncStop2() {
+auto RobotControlAsyncClientImpl::AsyncStop2() -> void {
   robot::StopRequest request;
 
   StopCallData* call = new StopCallData();
@@ -155,7 +155,7 @@ void RobotControlAsyncClientImpl::AsyncStop2() {
   call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
 }
 
-void RobotControlAsyncClientImpl::HandleRpcs() {
+auto RobotControlAsyncClientImpl::HandleRpcs() -> void {
   void* tag;
   bool ok;
   while (m_cq->Next(&tag, &ok)) {
