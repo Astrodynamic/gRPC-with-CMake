@@ -18,13 +18,6 @@ struct MoveCallData : public CallData {
   std::unique_ptr<grpc::ClientAsyncResponseReader<robot::MoveResponse>> m_responder;
 };
 
-struct StopCallData : public CallData {
-  void Proceed(bool ok) override;
-
-  robot::StopResponse m_response;
-  std::unique_ptr<grpc::ClientAsyncResponseReader<robot::StopResponse>> m_responder;
-};
-
 void MoveCallData::Proceed(bool ok) {
   if (m_status.ok()) {
     std::cout << "Move response: " << m_response.message() << std::endl;
@@ -33,6 +26,13 @@ void MoveCallData::Proceed(bool ok) {
   }
   delete this;
 }
+
+struct StopCallData : public CallData {
+  void Proceed(bool ok) override;
+
+  robot::StopResponse m_response;
+  std::unique_ptr<grpc::ClientAsyncResponseReader<robot::StopResponse>> m_responder;
+};
 
 void StopCallData::Proceed(bool ok) {
   if (m_status.ok()) {
