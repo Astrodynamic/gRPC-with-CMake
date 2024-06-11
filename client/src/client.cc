@@ -3,6 +3,46 @@
 #include <iostream>
 #include <string>
 
+struct CallData {
+  virtual ~CallData() = default;
+  virtual void Proceed(bool ok) = 0;
+
+  grpc::ClientContext m_ctx;
+  grpc::Status m_status;
+};
+
+struct MoveCallData : public CallData {
+  void Proceed(bool ok) override;
+
+  robot::MoveResponse m_response;
+  std::unique_ptr<grpc::ClientAsyncResponseReader<robot::MoveResponse>> m_responder;
+};
+
+struct StopCallData : public CallData {
+  void Proceed(bool ok) override;
+
+  robot::StopResponse m_response;
+  std::unique_ptr<grpc::ClientAsyncResponseReader<robot::StopResponse>> m_responder;
+};
+
+void MoveCallData::Proceed(bool ok) {
+  if (m_status.ok()) {
+    std::cout << "Move response: " << m_response.message() << std::endl;
+  } else {
+    std::cout << "Move RPC failed." << std::endl;
+  }
+  delete this;
+}
+
+void StopCallData::Proceed(bool ok) {
+  if (m_status.ok()) {
+    std::cout << "Stop response: " << m_response.message() << std::endl;
+  } else {
+    std::cout << "Stop RPC failed." << std::endl;
+  }
+  delete this;
+}
+
 RobotControlAsyncClientImpl::RobotControlAsyncClientImpl(std::shared_ptr<grpc::Channel> channel) : m_stub(robot::RobotControl::NewStub(channel)) {
   m_cq = std::make_unique<grpc::CompletionQueue>();
 }
@@ -113,24 +153,6 @@ void RobotControlAsyncClientImpl::AsyncStop2() {
   call->m_responder = m_stub->PrepareAsyncStop(&call->m_ctx, request, m_cq.get());
   call->m_responder->StartCall();
   call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
-}
-
-void RobotControlAsyncClientImpl::MoveCallData::Proceed(bool ok) {
-  if (m_status.ok()) {
-    std::cout << "Move response: " << m_response.message() << std::endl;
-  } else {
-    std::cout << "Move RPC failed." << std::endl;
-  }
-  delete this;
-}
-
-void RobotControlAsyncClientImpl::StopCallData::Proceed(bool ok) {
-  if (m_status.ok()) {
-    std::cout << "Stop response: " << m_response.message() << std::endl;
-  } else {
-    std::cout << "Stop RPC failed." << std::endl;
-  }
-  delete this;
 }
 
 void RobotControlAsyncClientImpl::HandleRpcs() {

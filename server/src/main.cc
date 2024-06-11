@@ -6,6 +6,6 @@ int main(int argc, char** argv) {
   // server.Run("0.0.0.0:50051");
 
   RobotControlAsyncServerImpl server;
-  server.Run();
+  server.Run("0.0.0.0:50051");
   return 0;
 }

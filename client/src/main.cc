@@ -16,13 +16,11 @@ int main(int argc, char** argv) {
   client.AsyncMove(10, 20);
 
   std::thread th = std::thread(&RobotControlAsyncClientImpl::Run, &client);
-  
+
   client.AsyncMove2(10, 20);
 
   client.Shutdown();
   th.join();
-
-
 
   return 0;
 }
