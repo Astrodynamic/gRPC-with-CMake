@@ -3,6 +3,7 @@
 #include <grpcpp/grpcpp.h>
 
 #include <memory>
+#include <future>
 
 #include "robot/control.grpc.pb.h"
 
@@ -17,10 +18,12 @@ class RobotControlAsyncClientImpl final {
   auto Move(int x, int y) -> void;
   auto AsyncMove(int x, int y) -> void;
   auto AsyncMove2(int x, int y) -> void;
+  auto AsyncMove3(int x, int y) -> std::future<robot::MoveResponse>;
 
   auto Stop() -> void;
   auto AsyncStop() -> void;
   auto AsyncStop2() -> void;
+  auto AsyncStop3() -> std::future<robot::StopResponse>;
 
  private:
   auto HandleRpcs() -> void;

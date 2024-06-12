@@ -24,6 +24,12 @@ int main(int argc, char** argv) {
 
   client.AsyncMove2(10, 20);
 
+  auto async_move_future = client.AsyncMove3(10, 20);
+
+  if (async_move_future.valid()) {
+    std::cout << "Async Move response: " << async_move_future.get().message() << std::endl;
+  }
+
   client.Shutdown();
   th.join();
 
