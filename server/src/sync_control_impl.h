@@ -16,7 +16,7 @@ class RobotControlSyncServerImpl final {
  public:
   RobotControlSyncServerImpl();
 
-  auto Run(const std::string& address) -> void;
+  auto Run(const std::string& soket) -> void;
 
  private:
   std::unique_ptr<RobotControlImpl> m_service;

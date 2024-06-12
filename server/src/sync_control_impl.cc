@@ -16,14 +16,14 @@ RobotControlSyncServerImpl::RobotControlSyncServerImpl() {
   m_service = std::make_unique<RobotControlImpl>();
 }
 
-auto RobotControlSyncServerImpl::Run(const std::string& address) -> void {
+auto RobotControlSyncServerImpl::Run(const std::string& soket) -> void {
   grpc::ServerBuilder builder;
-  builder.AddListeningPort(address, grpc::InsecureServerCredentials());
+  builder.AddListeningPort(soket, grpc::InsecureServerCredentials());
   builder.RegisterService(m_service.get());
 
   std::unique_ptr<grpc::Server> server = builder.BuildAndStart();
 
-  std::cout << "Server listening on " << address << std::endl;
+  std::cout << "Server listening on " << soket << std::endl;
 
   server->Wait();
 }
