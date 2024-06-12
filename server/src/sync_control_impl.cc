@@ -2,18 +2,18 @@
 
 #include <string>
 
-auto RobotControlImpl::Move(grpc::ServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) -> grpc::Status {
+auto RobotControlSyncImpl::Move(grpc::ServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) -> grpc::Status {
   response->set_message("Moved to (" + std::to_string(request->x()) + ", " + std::to_string(request->y()) + ")");
   return grpc::Status::OK;
 }
 
-auto RobotControlImpl::Stop(grpc::ServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) -> grpc::Status {
+auto RobotControlSyncImpl::Stop(grpc::ServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) -> grpc::Status {
   response->set_message("Robot stopped");
   return grpc::Status::OK;
 }
 
 RobotControlSyncServerImpl::RobotControlSyncServerImpl() {
-  m_service = std::make_unique<RobotControlImpl>();
+  m_service = std::make_unique<RobotControlSyncImpl>();
 }
 
 auto RobotControlSyncServerImpl::Run(const std::string& soket) -> void {

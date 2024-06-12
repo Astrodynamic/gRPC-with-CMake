@@ -14,6 +14,9 @@ int main(int argc, char** argv) {
   std::cout << "Moving to (0, 0)" << std::endl;
   client.Move(0, 0);
 
+  std::cout << "Moving to (10, 10)" << std::endl;
+  std::cout << "Callback Move response: " << client.CallbackMove(10, 10) << std::endl;
+
   std::cout << "Stopping robot" << std::endl;
   client.Stop();
 

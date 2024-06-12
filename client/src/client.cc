@@ -134,6 +134,39 @@ auto RobotControlAsyncClientImpl::AsyncMove3(int x, int y) -> std::future<robot:
   return call->m_promise.get_future();
 }
 
+auto RobotControlAsyncClientImpl::CallbackMove(int x, int y) -> std::string {
+  robot::MoveRequest request;
+  request.set_x(x);
+  request.set_y(y);
+
+  robot::MoveResponse response;
+  grpc::ClientContext context;
+
+  std::mutex mu;
+  std::condition_variable cv;
+
+  bool done = false;
+  
+  grpc::Status status;
+  m_stub->async()->Move(&context, &request, &response, [&mu, &cv, &done, &status](grpc::Status s) {
+    std::lock_guard<std::mutex> lock(mu);
+
+    status = std::move(s);
+    done = true;
+
+    cv.notify_one();
+  });
+
+  std::unique_lock<std::mutex> lock(mu);
+  cv.wait(lock, [&done]() { return done; });
+
+  if (status.ok()) {
+    return response.message();
+  }
+
+  return "";
+}
+
 auto RobotControlAsyncClientImpl::Stop() -> void {
   robot::StopRequest request;
   robot::StopResponse response;
@@ -187,6 +220,34 @@ auto RobotControlAsyncClientImpl::AsyncStop3() -> std::future<robot::StopRespons
   call->m_responder->Finish(&call->m_response, &call->m_status, (void*)call);
 
   return call->m_promise.get_future();
+}
+
+auto RobotControlAsyncClientImpl::CallbackStop() -> std::string {
+  robot::StopRequest request;
+  robot::StopResponse response;
+  grpc::ClientContext context;
+
+  std::mutex mu;
+  std::condition_variable cv;
+  
+  bool done = false;
+
+  grpc::Status status;
+  m_stub->async()->Stop(&context, &request, &response, [&mu, &cv, &done, &status](grpc::Status s) {
+    status = std::move(s);
+    std::lock_guard<std::mutex> lock(mu);
+    done = true;
+    cv.notify_one();
+  });
+
+  std::unique_lock<std::mutex> lock(mu);
+  cv.wait(lock, [&done]() { return done; });
+
+  if (status.ok()) {
+    return response.message();
+  }
+
+  return "";
 }
 
 auto RobotControlAsyncClientImpl::HandleRpcs() -> void {
