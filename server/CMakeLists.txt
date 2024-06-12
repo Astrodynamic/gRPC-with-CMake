@@ -2,14 +2,12 @@ project(server VERSION 0.0.1 LANGUAGES CXX)
 
 set(HEADERS
     src/async_control_impl.h
-    src/control_impl.h
-    src/server.h
+    src/sync_control_impl.h
 )
 
 set(SOURCES
     src/async_control_impl.cc
-    src/control_impl.cc
-    src/server.cc
+    src/sync_control_impl.cc
 )
 
 add_executable(${PROJECT_NAME}
