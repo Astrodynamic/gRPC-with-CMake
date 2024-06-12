@@ -4,7 +4,12 @@
 #include "client.h"
 
 int main(int argc, char** argv) {
-  RobotControlAsyncClientImpl client(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+  grpc::ChannelArguments args;
+  args.SetInt(GRPC_ARG_INITIAL_RECONNECT_BACKOFF_MS, 1000);
+  args.SetInt(GRPC_ARG_MIN_RECONNECT_BACKOFF_MS, 1000);
+  args.SetInt(GRPC_ARG_MAX_RECONNECT_BACKOFF_MS, 1000);
+
+  RobotControlAsyncClientImpl client(grpc::CreateCustomChannel("localhost:50051", grpc::InsecureChannelCredentials(), args));
 
   std::cout << "Moving to (0, 0)" << std::endl;
   client.Move(0, 0);
