@@ -146,7 +146,7 @@ auto RobotControlAsyncClientImpl::CallbackMove(int x, int y) -> std::string {
   std::condition_variable cv;
 
   bool done = false;
-  
+
   grpc::Status status;
   m_stub->async()->Move(&context, &request, &response, [&mu, &cv, &done, &status](grpc::Status s) {
     std::lock_guard<std::mutex> lock(mu);
@@ -229,7 +229,7 @@ auto RobotControlAsyncClientImpl::CallbackStop() -> std::string {
 
   std::mutex mu;
   std::condition_variable cv;
-  
+
   bool done = false;
 
   grpc::Status status;

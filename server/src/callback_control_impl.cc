@@ -4,7 +4,7 @@
 
 auto RobotControlCallbackImpl::Move(grpc::CallbackServerContext* context, const robot::MoveRequest* request, robot::MoveResponse* response) -> grpc::ServerUnaryReactor* {
   response->set_message("Moved to (" + std::to_string(request->x()) + ", " + std::to_string(request->y()) + ")");
-  
+
   grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
   reactor->Finish(grpc::Status::OK);
 
@@ -13,10 +13,10 @@ auto RobotControlCallbackImpl::Move(grpc::CallbackServerContext* context, const 
 
 auto RobotControlCallbackImpl::Stop(grpc::CallbackServerContext* context, const robot::StopRequest* request, robot::StopResponse* response) -> grpc::ServerUnaryReactor* {
   response->set_message("Robot stopped");
-  
+
   grpc::ServerUnaryReactor* reactor = context->DefaultReactor();
   reactor->Finish(grpc::Status::OK);
-  
+
   return reactor;
 }
 

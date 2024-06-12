@@ -2,9 +2,9 @@
 
 #include <grpcpp/grpcpp.h>
 
-#include <string>
-#include <memory>
 #include <future>
+#include <memory>
+#include <string>
 
 #include "robot/control.grpc.pb.h"
 

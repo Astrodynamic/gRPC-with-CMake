@@ -1,6 +1,6 @@
-#include "sync_control_impl.h"
 #include "async_control_impl.h"
 #include "callback_control_impl.h"
+#include "sync_control_impl.h"
 
 int main(int argc, char** argv) {
   // RobotControlSyncServerImpl server;
@@ -11,6 +11,6 @@ int main(int argc, char** argv) {
 
   // RobotControlCallbackServerImpl server;
   // server.Run("0.0.0.0:50051");
-  
+
   return 0;
 }
